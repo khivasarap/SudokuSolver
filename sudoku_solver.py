@@ -17,20 +17,46 @@ def possible_axis(row, column, number):
             return False
     #Check if exists in column
     for j in range(0,9):
-        if grid[column][i] == number and i!= row:
+        if grid[column][j] == number and j!=row:
             return False
+    return True
 
-    return possible_box(row,column,number)
+
+def validate(row,column,number):
+    return possible_axis(row, column, number) and possible_box(row,column,number)
 
 def possible_box(row,column,number):
     # Perform floor division
     row_index = (row // 3)*3
     col_index = (column //3)*3
-    for x in range(row_index,row_index+3):
-        for y in range(col_index,col_index+3):
-            if grid[x][y] == number:
+    for a in range(row_index,row_index+3):
+        for b in range(col_index,col_index+3):
+            if grid[b][a] == number:
                 return False
-    #print(row_index, col_index)
+    
+    return True
+
+def display(matrix):
+    for i in range(9):
+        print(matrix[i])
 
 
-possible_axis(8,0,6)
+# Solve using Backtracking. Place the number in the box and check if valid.
+def solve_backtrack():
+    global grid
+    for x in range(9):
+        for y in range(9):
+            # 0 means it is not filled in the grid
+            if grid[x][y] == 0:
+                # Check from 1-9 what fits in
+                for n in range(1,10):
+                    if validate(y, x, n):
+                        grid[x][y] = n
+                        solve_backtrack()
+                        # Ensure we backtrack
+                        grid[x][y] = 0
+                return
+    display(grid)
+ 
+
+solve_backtrack()
